@@ -159,7 +159,7 @@ static void internal_idevice_deinit(void)
 
 static thread_once_t init_once = THREAD_ONCE_INIT;
 static thread_once_t deinit_once = THREAD_ONCE_INIT;
-
+/*
 #ifdef WIN32
 BOOL WINAPI DllMain(HINSTANCE hModule, DWORD dwReason, LPVOID lpReserved)
 {
@@ -186,7 +186,7 @@ static void __attribute__((destructor)) libimobiledevice_deinitialize(void)
 	thread_once(&deinit_once, internal_idevice_deinit);
 }
 #endif
-
+*/
 static idevice_event_cb_t event_cb = NULL;
 
 static void usbmux_event_cb(const usbmuxd_event_t *event, void *user_data)

@@ -37,9 +37,10 @@ int ffmpeg_decode_init(struct ffmpeg_decode *decode, enum AVCodecID id)
         ffmpeg_decode_free(decode);
         return ret;
     }
-
-    if (decode->codec->capabilities & CODEC_CAP_TRUNC)
-        decode->decoder->flags |= CODEC_FLAG_TRUNC;
+    // Looks like obs just commented out this removed trunc flag usage
+    //https://github.com/obsproject/obs-studio/pull/8376/files
+    //if (decode->codec->capabilities & CODEC_CAP_TRUNC)
+   //    decode->decoder->flags |= CODEC_FLAG_TRUNC;
 
     decode->decoder->flags |= AV_CODEC_FLAG_LOW_DELAY;
     decode->decoder->flags2 = AV_CODEC_FLAG2_CHUNKS;

@@ -71,6 +71,6 @@ void mutex_destroy(mutex_t* mutex);
 void mutex_lock(mutex_t* mutex);
 void mutex_unlock(mutex_t* mutex);
 
-void thread_once(thread_once_t *once_control, void (*init_routine)(void));
+//void thread_once(thread_once_t *once_control, void (*init_routine)(void));
 
 #endif

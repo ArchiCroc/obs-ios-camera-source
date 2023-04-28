@@ -122,7 +122,7 @@ void mutex_unlock(mutex_t* mutex)
 	pthread_mutex_unlock(mutex);
 #endif
 }
-
+/*
 void thread_once(thread_once_t *once_control, void (*init_routine)(void))
 {
 #ifdef WIN32
@@ -138,3 +138,4 @@ void thread_once(thread_once_t *once_control, void (*init_routine)(void))
 	pthread_once(once_control, init_routine);
 #endif
 }
+*/

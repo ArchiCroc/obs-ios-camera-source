@@ -4,27 +4,31 @@ add_library(obs-ios-camera-source MODULE)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
+#set(PKG_CONFIG_EXECUTABLE "C:/Projects/vcpkg/installed/x86-windows/bin/pkgconf-3.dll")
+set(PKG_CONFIG_EXECUTABLE "C:/Projects/obs-build-dependencies/pkg-config.exe")
 
 # Try to find libobs, either through the old way or the new (after 27.2.1) way.
 # If the new method fails, don't print an error because we also need to try the
 # old way in case this is an older version of libobs (e.g. Ubuntu 18.04)
-find_package(libobs QUIET)
-if (libobs_FOUND)
+#find_package(libobs QUIET)
+#if (libobs_FOUND)
 	# Found using the new method (OBS 28+)
 	target_link_libraries(obs-ios-camera-source OBS::libobs)
-else()
+#else()
 	# Try to find it using the old method instead
-	find_package(LibObs REQUIRED)
-	include_directories(${LIBOBS_INCLUDE_DIRS})
-	target_link_libraries(obs-ios-camera-source ${LIBOBS_LIBRARIES})
-endif()
+#	find_package(LibObs REQUIRED)
+#	include_directories(${LIBOBS_INCLUDE_DIRS})
+#	target_link_libraries(obs-ios-camera-source ${LIBOBS_LIBRARIES})
+#endif()
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET
-	libavcodec
-	libavutil
-)
-target_link_libraries(obs-ios-camera-source PkgConfig::LIBAV)
+find_package(FFmpeg REQUIRED COMPONENTS avcodec avutil)
+
+#find_package(PkgConfig REQUIRED)
+#pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET
+#	libavcodec
+#	libavutil
+#)
+#target_link_libraries(obs-ios-camera-source PkgConfig::LIBAV)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 	set(ARCH 64)
@@ -432,3 +436,5 @@ if(APPLE)
 		${COCOA})
 endif()
 # -- End of section --
+
+setup_plugin_target(obs-ios-camera-source)
