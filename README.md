@@ -11,7 +11,7 @@ To use this you use the [accompanying iOS app](https://obs.camera/) to begin str
 
 ## Downloads
 
-### Ubuntu 22.04 (and possibly other distros), 20.04, and 18.04  
+### Ubuntu 24.04 (and possibly other distros), 22.04, 20.04, and 18.04
 (Confirmed working on Manjaro as of 06 Oct 2022 by [@seffyroff](https://github.com/seffyroff))
 
 Go to the [releases](https://github.com/dougg3/obs-ios-camera-source/releases) section of this repository and download the latest release. After downloading, place the zip file in your home directory and run:
@@ -24,7 +24,7 @@ You must have the `unzip` package installed for this to work: `sudo apt install 
 
 ## Building
 
-### Ubuntu 22.04/20.04/18.04
+### Ubuntu 24.04/22.04/20.04/18.04
 
 - Make sure you have the universe and multiverse repositories enabled so you will have access to FFmpeg.
 - Install OBS Studio using the [Ubuntu instructions on the OBS wiki](https://obsproject.com/wiki/install-instructions#ubuntu-installation).
@@ -57,6 +57,9 @@ Note for Ubuntu 18.04 users: this plugin now requires a newer version of CMake t
 - Install OBS Studio using the [Arch instructions on the OBS wiki](https://obsproject.com/wiki/unofficial-linux-builds#arch-linuxmanjaro).
 - Install prerequisites: `sudo pacman -S git make gcc cmake pkg-config`
 - Follow the same instructions as Ubuntu starting from "Download this plugin source code"
+
+> Note: Depending on how OBS is installed, **SteamOS** users may need to explicitly install `ffmpeg` in addition to the above mentioned prerequisites should they encounter compilation errors around missing `libavcodec`:
+> - `sudo pacman -S ffmpeg` 
 
 ### Other distros
 

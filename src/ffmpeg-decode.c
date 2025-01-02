@@ -16,7 +16,6 @@
  ******************************************************************************/
 
 #include "ffmpeg-decode.h"
-#include "obs-ffmpeg-compat.h"
 #include <obs-avc.h>
 
 int ffmpeg_decode_init(struct ffmpeg_decode *decode, enum AVCodecID id)
@@ -37,10 +36,11 @@ int ffmpeg_decode_init(struct ffmpeg_decode *decode, enum AVCodecID id)
         ffmpeg_decode_free(decode);
         return ret;
     }
-    // Looks like obs just commented out this removed trunc flag usage
-    //https://github.com/obsproject/obs-studio/pull/8376/files
-    //if (decode->codec->capabilities & CODEC_CAP_TRUNC)
-   //    decode->decoder->flags |= CODEC_FLAG_TRUNC;
+
+#if LIBAVCODEC_VERSION_MAJOR < 60
+    if (decode->codec->capabilities & AV_CODEC_CAP_TRUNCATED)
+        decode->decoder->flags |= AV_CODEC_FLAG_TRUNCATED;
+#endif
 
     decode->decoder->flags |= AV_CODEC_FLAG_LOW_DELAY;
     decode->decoder->flags2 = AV_CODEC_FLAG2_CHUNKS;
@@ -52,8 +52,12 @@ void ffmpeg_decode_free(struct ffmpeg_decode *decode)
 {
     if (decode->decoder)
     {
+#if LIBAVCODEC_VERSION_MAJOR < 61
         avcodec_close(decode->decoder);
         av_free(decode->decoder);
+#else
+        avcodec_free_context(&decode->decoder);
+#endif
     }
 
     if (decode->frame)
@@ -147,7 +151,7 @@ static inline enum speaker_layout convert_speaker_layout(uint8_t channels)
 static inline void copy_data(struct ffmpeg_decode *decode, uint8_t *data,
                              size_t size)
 {
-    size_t new_size = size + INPUT_BUFFER_PADDING_SIZE;
+    size_t new_size = size + AV_INPUT_BUFFER_PADDING_SIZE;
 
     if (decode->packet_size < new_size)
     {
@@ -156,7 +160,7 @@ static inline void copy_data(struct ffmpeg_decode *decode, uint8_t *data,
         decode->packet_size = new_size;
     }
 
-    memset(decode->packet_buffer + size, 0, INPUT_BUFFER_PADDING_SIZE);
+    memset(decode->packet_buffer + size, 0, AV_INPUT_BUFFER_PADDING_SIZE);
     memcpy(decode->packet_buffer, data, size);
 }
 
@@ -206,7 +210,11 @@ bool ffmpeg_decode_audio(struct ffmpeg_decode *decode,
     audio->samples_per_sec = decode->frame->sample_rate;
     audio->format = convert_sample_format(decode->frame->format);
     audio->speakers =
+#if LIBAVCODEC_VERSION_MAJOR < 61
     convert_speaker_layout((uint8_t)decode->decoder->channels);
+#else
+    convert_speaker_layout((uint8_t)decode->decoder->ch_layout.nb_channels);
+#endif
 
     audio->frames = decode->frame->nb_samples;
 
